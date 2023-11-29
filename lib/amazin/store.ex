@@ -7,6 +7,7 @@ defmodule Amazin.Store do
   alias Amazin.Repo
 
   alias Amazin.Store.Product
+  alias Amazin.Store.Cart
 
   @doc """
   Returns the list of products.
@@ -146,5 +147,63 @@ defmodule Amazin.Store do
   """
   def broadcast_product_event(event, product) do
     Phoenix.PubSub.broadcast(Amazin.PubSub, "products", {event, product})
+  end
+
+   @doc """
+  Create a cart.
+
+  ## Examples
+
+      iex> create_cart()
+      {:ok, %Cart{}}
+
+  """
+  def create_cart do
+    Repo.insert(%Cart{status: :open})
+  end
+
+  @doc """
+  Get a cart by id.
+
+  ## Examples
+
+      iex> get_cart(1)
+      %Cart{}
+
+  """
+  def get_cart(id) do
+    Repo.get(Cart, id)
+  end
+
+  alias Amazin.Store.CartItem
+
+  @doc """
+  List products in a cart.
+
+  ## Examples
+
+      iex> list_cart_items(344)
+      [%CartItem{}, %CartItem{}]
+  """
+  def list_cart_items(cart_id) do
+    CartItem
+    |> where([ci], ci.cart_id == ^cart_id)
+    |> preload(:product)
+    |> Repo.all()
+  end
+
+  @doc """
+  Add a product to a cart. Increments quantity on conflict.
+
+  ## Examples
+
+      iex> add_item_to_cart(1, %Product{})
+      {:ok, %Product{}}
+  """
+  def add_item_to_cart(cart_id, product) do
+    Repo.insert(%CartItem{cart_id: cart_id, product: product, quantity: 1},
+      conflict_target: [:cart_id, :product_id],
+      on_conflict: [inc: [quantity: 1]]
+    )
   end
 end
