@@ -8,6 +8,7 @@ defmodule Amazin.Store do
 
   alias Amazin.Store.Product
   alias Amazin.Store.Cart
+  alias Amazin.Store.Order
 
   @doc """
   Returns the list of products.
@@ -205,5 +206,22 @@ defmodule Amazin.Store do
       conflict_target: [:cart_id, :product_id],
       on_conflict: [inc: [quantity: 1]]
     )
+  end
+  
+  @doc """
+  Create an order and complete a cart
+
+  ## Examples
+
+    iex> create_order(1)
+    {:ok, %Order{}}
+  """
+  def create_order(cart_id) do
+    cart_id
+    |> get_cart()
+    |> Cart.changeset(%{status: :completed})
+    |> Repo.update()
+
+    Repo.insert(%Order{cart_id: cart_id})
   end
 end

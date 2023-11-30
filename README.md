@@ -1,5 +1,7 @@
 # Amazin
 
+Quick eCommerce application built using Phoenix LiveView as a proof of concept
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies
