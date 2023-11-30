@@ -1,15 +1,5 @@
 import Config
 
-# Configure your database
-config :amazin, Amazin.Repo,
-  username: "chris",
-  password: "ynbt2qra",
-  hostname: "localhost",
-  database: "amazin_dev",
-  stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
-
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
